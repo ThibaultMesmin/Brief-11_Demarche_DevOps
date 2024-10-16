@@ -62,7 +62,7 @@ jobs:
           name: Dist
           path: ./dist
       - name: Zip File
-        run: zip -r dist/assets.zip /path/to/assets
+        run: zip -r assets.zip dit/*
       - name: Create Github Release
         env:
           VERSION: "${{ needs.get-version.outputs.version }}"
@@ -74,6 +74,6 @@ jobs:
         # $VERSION = la version récupérée du get-version
         # GH_TOKEN = connu et généré par github
         run: |
-          gh release create --repo $REPO --target $COMMIT $VERSION dist/assets.zip/*
+          gh release create --repo $REPO --target $COMMIT $VERSION assets.zip
     
     
