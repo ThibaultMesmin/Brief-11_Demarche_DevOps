@@ -1,4 +1,4 @@
-sname: Release
+name: Release
 
 # quand se déclenche la ci
 on:
