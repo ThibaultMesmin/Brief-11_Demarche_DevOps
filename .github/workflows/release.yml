@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      
+permissions:
+  contents: write
 
 jobs:
   get-version:
@@ -12,11 +15,9 @@ jobs:
       release-branches: '^(main)$'
     
   build:
-   name: Spring build
+   name: Build
    runs-on: ubuntu-latest
-   # si get-version voit un commit qui permet une release (montée de version), il fait le build, sinon fait pas le build
    if: ${{ needs.get-version.outputs.will-release == 'true' }}
-   # on doit lui dire qu'on a besoin de get-version pour le build (récupère que les sorties du job)
    needs: 
      - get-version
 
@@ -24,14 +25,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: setup rust
-        uses: rust-marker/marker@v0.5
-
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-          default: true 
+          target: wasm32-unknown-unknown
+          
 
   release:
     name: Release
@@ -48,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: spring
-          path: build/
+          path: dist/
       - name: Create Github Release
         env:
           VERSION: "${{ needs.get-version.outputs.version }}"
