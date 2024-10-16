@@ -1,10 +1,12 @@
 name: Release
 
+# quand se déclenche la ci
 on:
   push:
     branches:
       - main
       
+# Donne les permissions nécessaires pour écrire du contenu
 permissions:
   contents: write
 
@@ -13,7 +15,7 @@ jobs:
     uses: shiipou/github-actions/.github/workflows/get-version.yml@main
     with:
       release-branches: '^(main)$'
-    
+  # Job pour construire le projet
   build:
    name: Build
    runs-on: ubuntu-latest
@@ -22,24 +24,29 @@ jobs:
      - get-version
 
    steps:
+      # Clone le dépôt
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      # Install Rust
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@v1
         with:
-          toolchain: stable
-          target: wasm32-unknown-unknown
+          toolchain: stable # Utilise la version stable de Rust
+          target: wasm32-unknown-unknown #platforme cible (web assembly)
+          
+      - name: Install Trunk
+        uses: mbround18/trunk-rs@v0.0.1
+          
       - name: Build with Cargo
         env:
          VERSION: "${{ needs.get-version.outputs.version }}"
-        run: cargo build --release
+        run: trunk build --release
       - uses: actions/upload-artifact@v4
         with:
          name: Dist
          path: ./dist
           
-
+  # Job pour créer une release
   release:
     name: Release
     runs-on: ubuntu-latest
@@ -49,12 +56,10 @@ jobs:
       - build
       
     steps:
-      - name: Install Trunk
-        uses: mbround18/trunk-rs@v0.0.1
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: spring
+          name: Dist
           path: ./dist
       - name: Create Github Release
         env:
@@ -67,6 +72,6 @@ jobs:
         # $VERSION = la version récupérée du get-version
         # GH_TOKEN = connu et généré par github
         run: |
-          gh release create --repo $REPO --target $COMMIT $VERSION build/*
+          gh release create --repo $REPO --target $COMMIT $VERSION dist/*
     
     
