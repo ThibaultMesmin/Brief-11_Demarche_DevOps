@@ -72,6 +72,7 @@ jobs:
         # $VERSION = la version récupérée du get-version
         # GH_TOKEN = connu et généré par github
         run: |
-          gh release create --repo $REPO --target $COMMIT $VERSION dist/asset.zip/*
+          zip -r dist/assets.zip /path/to/assets
+          gh release create --repo $REPO --target $COMMIT $VERSION dist/assets.zip/*
     
     
