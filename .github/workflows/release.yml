@@ -35,7 +35,7 @@ jobs:
           target: wasm32-unknown-unknown #platforme cible (web assembly)
           
       - name: Install Trunk
-        uses: mbround18/trunk-rs@v0.0.1
+        uses: jetli/trunk-action@v0.5.0
           
       - name: Build with Cargo
         env:
