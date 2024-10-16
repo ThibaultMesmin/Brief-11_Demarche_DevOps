@@ -1,4 +1,4 @@
-name: Release
+sname: Release
 
 # quand se déclenche la ci
 on:
@@ -62,7 +62,7 @@ jobs:
           name: Dist
           path: ./dist
       - name: Zip File
-        run: zip -r assets.zip dit/*
+        run: zip -r assets.zip dist/*
       - name: Create Github Release
         env:
           VERSION: "${{ needs.get-version.outputs.version }}"
