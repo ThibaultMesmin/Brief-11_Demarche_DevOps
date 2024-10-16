@@ -6,8 +6,12 @@ on:
       - main
 
 jobs:
-  build:
+  get-version:
+    uses: github-actions/.github/workflows/get-version.yml@main
     
+  build:
+    needs: get-version
+    if: ${{ needs.get-version.outputs.will-release == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +22,15 @@ jobs:
         uses: rust-marker/marker@v0.5
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@v1
         with:
-          targets: ${{ matrix.targets }}
+          toolchain: stable
+          default: true 
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Trunk
+        uses: mbround18/trunk-rs@v0.0.1
+    
     
